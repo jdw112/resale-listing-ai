@@ -1,0 +1,15 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Dynamic: {query} is replaced with the confirmed product-identity text (Brand/ProductName/ModelNumber/Variant/Colour) at call time via .replace(), NOT str.format() -- see adapters.py's image_match(). Confirms identity via web search when there is no readable UPC.",
+  "instructions": "Confirm via web search whether this product context matches a real, specific product (not a generic category guess): \"{query}\". Return matched=true only if you find confident corroboration; otherwise matched=false, confidence 0.0. Never invent a match.",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "matched": {"type": "boolean"},
+      "confidence": {"type": "number"},
+      "match_description": {"type": ["string", "null"]}
+    },
+    "required": ["matched", "confidence", "match_description"],
+    "additionalProperties": false
+  }
+}

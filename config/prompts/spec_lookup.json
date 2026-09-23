@@ -1,0 +1,36 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Dynamic: {query} is replaced with the confirmed product-identity text at call time via .replace(), NOT str.format(). Manufacturer spec-sheet dimension/weight lookup -> the physical Product dimension fields (resale_listing_ai/adapters.py's measures_lookup()). A web-search-with-citations call, same seam family as retail_price.",
+  "instructions": "Find the manufacturer's specification sheet or official product page for: \"{query}\". From it, report the product's UNPACKAGED (the item itself) and PACKAGED (shipping box / retail package) dimensions and weight. Convert every dimension to centimetres and every weight to kilograms yourself, reporting the converted numeric value only (e.g. inches -> cm, pounds -> kg). Report source_url as the page you took the figures from. Only report a figure that is actually stated on a reputable manufacturer or major-retailer spec sheet — if you cannot find a genuine spec sheet for this exact product, set match_found to false and leave packaged/unpackaged null. Never estimate, guess, or fill in typical dimensions for the category. If only one of packaged/unpackaged is published, report that one and leave the other null.",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "match_found": {"type": "boolean"},
+      "source_url": {"type": ["string", "null"]},
+      "unpackaged": {
+        "type": ["object", "null"],
+        "properties": {
+          "length_cm": {"type": ["number", "null"]},
+          "width_cm": {"type": ["number", "null"]},
+          "height_cm": {"type": ["number", "null"]},
+          "weight_kg": {"type": ["number", "null"]}
+        },
+        "required": ["length_cm", "width_cm", "height_cm", "weight_kg"],
+        "additionalProperties": false
+      },
+      "packaged": {
+        "type": ["object", "null"],
+        "properties": {
+          "length_cm": {"type": ["number", "null"]},
+          "width_cm": {"type": ["number", "null"]},
+          "height_cm": {"type": ["number", "null"]},
+          "weight_kg": {"type": ["number", "null"]}
+        },
+        "required": ["length_cm", "width_cm", "height_cm", "weight_kg"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["match_found", "source_url", "unpackaged", "packaged"],
+    "additionalProperties": false
+  }
+}

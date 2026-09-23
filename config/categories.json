@@ -1,0 +1,39 @@
+{
+  "$note": "OPEN category reference (seed list), NOT a closed taxonomy. Return one reasonable, reasonably specific category/subcategory inferred from product context and how comparables are classified online. This is a central inventory record; channel-specific category mapping happens later at posting.",
+  "categories": {
+    "Smart Home": [
+      "Video Doorbells",
+      "Cameras",
+      "Thermostats",
+      "Speakers",
+      "Sensors"
+    ],
+    "Home & Kitchen": [
+      "Coffee Makers",
+      "Small Appliances",
+      "Cookware"
+    ],
+    "HVAC": [
+      "Parts",
+      "Filters",
+      "Controls"
+    ],
+    "Garden & Outdoor": [
+      "Tools",
+      "Furniture",
+      "Lighting"
+    ],
+    "Electrical": [
+      "Cables & Cords",
+      "Adapters",
+      "Fixtures"
+    ],
+    "Building Materials": [
+      "Insulation",
+      "Hardware",
+      "Fasteners"
+    ]
+  },
+  "mode": "open_vocabulary",
+  "usage": "Prefer an existing label when a comparable fits (consistency across inventory); append a new label when nothing fits. Do NOT constrain output to this list."
+}

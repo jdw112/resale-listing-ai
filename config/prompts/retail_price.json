@@ -1,0 +1,36 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Dynamic: {query} is replaced with the confirmed product-identity text at call time via .replace(), NOT str.format(). NEW-market Canadian retail price -> the pricing anchor (resale_listing_ai/adapters.py's retail_price()).",
+  "instructions": "Find the current NEW-market Canadian retail price, in CAD, for: \"{query}\". Prefer reputable Canadian retailers. If the best source you find is priced in USD, convert it to CAD yourself and report price_cad as the converted CAD amount (set original_currency to USD so the conversion is auditable). Include a second, corroborating source when a reputable one is available. If reputable sources disagree by more than roughly 10%, note it via a lower confidence_label. If you cannot find a genuine match for this exact product, set match_found to false and leave anchor/corroborating null — never estimate or guess a price.",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "match_found": {"type": "boolean"},
+      "anchor": {
+        "type": ["object", "null"],
+        "properties": {
+          "price_cad": {"type": "number"},
+          "confidence": {"type": "number"},
+          "source_name": {"type": "string"},
+          "source_url": {"type": "string"},
+          "original_currency": {"type": "string", "enum": ["CAD", "USD"]}
+        },
+        "required": ["price_cad", "confidence", "source_name", "source_url", "original_currency"],
+        "additionalProperties": false
+      },
+      "corroborating": {
+        "type": ["object", "null"],
+        "properties": {
+          "price_cad": {"type": "number"},
+          "source_name": {"type": "string"},
+          "source_url": {"type": "string"}
+        },
+        "required": ["price_cad", "source_name", "source_url"],
+        "additionalProperties": false
+      },
+      "confidence_label": {"type": "string", "enum": ["High", "Medium", "Low"]}
+    },
+    "required": ["match_found", "anchor", "corroborating", "confidence_label"],
+    "additionalProperties": false
+  }
+}

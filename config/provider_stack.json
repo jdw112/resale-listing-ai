@@ -1,0 +1,36 @@
+{
+  "$schema": "resale-listing-ai-provider-stack/v1",
+  "note": "Single web-search-with-citations provider backs image_match, retail_price, and resale_price (resale_listing_ai/adapters.py).",
+  "web_search_provider": "gemini_search",
+  "options": ["openai_web_search", "perplexity_sonar", "gemini_search", "openrouter_online"],
+  "override": "Set RESALE_LISTING_AI_WEB_SEARCH_PROVIDER at runtime to override this default without editing config.",
+
+  "vision_note": "vision_identify and image_process's classify step share one provider (resale_listing_ai/adapters.py's _vision_provider()) — both are single/multi-image-in, structured-JSON-out calls.",
+  "vision_provider": "openai",
+  "vision_options": ["openai", "gemini", "openrouter", "bedrock"],
+  "vision_override": "Set RESALE_LISTING_AI_VISION_PROVIDER at runtime to override this default without editing config.",
+
+  "copy_note": "generate_copy's provider (resale_listing_ai/adapters.py's _copy_provider()), independent of vision_provider.",
+  "copy_provider": "openai",
+  "copy_options": ["openai", "gemini", "openrouter"],
+  "copy_override": "Set RESALE_LISTING_AI_COPY_PROVIDER at runtime to override this default without editing config.",
+
+  "image_process_note": "image_process's provider (resale_listing_ai/adapters.py's _image_process_provider()) — background removal + tape/clutter inpaint for finished listing images.",
+  "image_process_provider": "photoroom_clipdrop",
+  "image_process_options": ["photoroom_clipdrop", "gemini", "bedrock"],
+  "image_process_override": "Set RESALE_LISTING_AI_IMAGE_PROCESS_PROVIDER at runtime to override this default without editing config.",
+
+  "hero_generate_note": "AI website-hero generation provider (resale_listing_ai/adapters.py's _hero_generate_provider()). Text-to-image; only gemini is wired today.",
+  "hero_generate_provider": "photoroom",
+  "hero_generate_options": ["photoroom", "openai", "gemini", "bedrock"],
+  "hero_generate_override": "Set RESALE_LISTING_AI_HERO_GENERATE_PROVIDER at runtime to override this default without editing config.",
+
+  "hero_persist_prompt_note": "Persist the exact text-to-image prompt used for each AI website hero onto the product record (WebsiteHeroPrompt) for audit/tuning. On by default.",
+  "hero_persist_prompt": true,
+  "hero_persist_prompt_override": "Set RESALE_LISTING_AI_PERSIST_HERO_PROMPT=0 (or the provider_stack.hero_persist_prompt admin override) to disable.",
+
+  "json_repair_note": "The JSON-repair/normalizer step (resale_listing_ai/json_repair.py) that coerces raw model output onto our schemas at each stage boundary. Not tied to one vendor — swap via config or env, same seam as web_search_provider.",
+  "json_repair_provider": "claude",
+  "json_repair_options": ["claude", "openai"],
+  "json_repair_override": "Set RESALE_LISTING_AI_JSON_REPAIR_PROVIDER at runtime to override this default without editing config."
+}

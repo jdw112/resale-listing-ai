@@ -1,0 +1,18 @@
+{
+  "$note": "Placeholder thresholds for OversizedFlag (FR-10). CONFIRM against the current UPS Canada package dimensions/size/weight guide (PRD Q1).",
+  "status": "TODO_CONFIRM",
+  "source": "UPS Canada \u2014 Package dimensions, size, and weight guide",
+  "unit": {
+    "length": "cm",
+    "weight": "kg"
+  },
+  "rules": {
+    "oversized_if_any": {
+      "longest_side_cm": 274.32,
+      "length_plus_girth_cm": 330,
+      "weight_kg": 68
+    },
+    "girth_formula": "2 x (width + height)",
+    "output_when_package_data_missing": "Unable to Determine"
+  }
+}

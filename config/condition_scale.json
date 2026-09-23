@@ -1,0 +1,22 @@
+{
+  "$note": "Starter condition vocabulary (FR-15). CONFIRM the cross-category scale (PRD Q2).",
+  "status": "TODO_CONFIRM",
+  "provided_grades": [
+    "New",
+    "Open Box",
+    "Used - Like New",
+    "Used - Good",
+    "Used - Fair",
+    "For Parts"
+  ],
+  "ai_suggested_grades": [
+    "New",
+    "Open Box",
+    "Open Box \u2013 Like New",
+    "Used - Like New",
+    "Used - Good",
+    "Used - Fair",
+    "For Parts"
+  ],
+  "rule": "ProvidedConditionGrade is controlled input and is never overwritten; when AISuggestedConditionGrade differs, set condition_flag and retain both."
+}

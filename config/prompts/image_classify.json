@@ -1,0 +1,23 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Per-image classification inside image_process (resale_listing_ai/adapters.py's _classify_image()). IMAGE_CATEGORIES is derived from json_schema.properties.category.enum at load time -- one authority, nothing to drift out of sync.",
+  "instructions": "Classify this single product-intake photo. category: 'actual_product' if it shows the physical unit itself, 'original_packaging' if it primarily shows the retail box/packaging, 'product_information_label' if it primarily shows a rating plate/label/barcode sticker, otherwise 'contextual'. needs_cleanup: true ONLY if a measuring tape, ruler, or other extraneous clutter unrelated to the product is visible in frame and should be removed. If true, clutter_bbox must be a tight bounding box (x, y, w, h, each a fraction 0-1 of image width/height) around ONLY that clutter — never around the product itself, and never covering areas that show the product's true condition (scuffs, cracks, wear). If you are not confident of a tight box, set needs_cleanup to false and clutter_bbox to null rather than guessing.",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "category": {"type": "string", "enum": ["actual_product", "original_packaging", "product_information_label", "contextual"]},
+      "needs_cleanup": {"type": "boolean"},
+      "clutter_bbox": {
+        "type": ["object", "null"],
+        "properties": {
+          "x": {"type": "number"}, "y": {"type": "number"},
+          "w": {"type": "number"}, "h": {"type": "number"}
+        },
+        "required": ["x", "y", "w", "h"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["category", "needs_cleanup", "clutter_bbox"],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,15 @@
+.submit {
+  text-align: left;
+  max-width: 620px;
+}
+.submit__head {
+  margin-bottom: 24px;
+}
+.submit__sub {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.submit__form .field:last-of-type {
+  margin-bottom: 20px;
+}

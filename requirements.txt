@@ -1,0 +1,48 @@
+# run_demo.py is stub-only and needs nothing beyond the stdlib (resale_listing_ai/db.py's
+# default sqlite mode is stdlib sqlite3, resale_listing_ai/queue.py's default local mode is
+# pure in-memory — no Postgres/AWS required to run tests/demo).
+# For tests:
+pytest>=7.0
+moto[sqs]>=5.0      # in-process AWS mock -> real boto3 SQS calls tested with no Docker/LocalStack
+bcrypt>=4.0          # resale_listing_ai/auth.py -> password hashing for the new /v1/auth/* routes
+
+# Real adapters (resale_listing_ai/adapters.py), only needed when RESALE_LISTING_AI_STUBS is unset:
+openai>=1.0         # vision_identify + image_process classification + copy stage -> Responses API (needs OPENAI_API_KEY)
+google-genai>=0.3   # resale_listing_ai/providers/gemini.py -> Gemini vision/copy/classify/
+                    # web-search-with-citations (needs GEMINI_API_KEY)
+pyzbar>=0.1.9       # barcode_read -> UPC/EAN decode (needs system `zbar`, e.g. `brew install zbar`)
+pytesseract>=0.3.10 # ocr_read -> local Tesseract OCR text extraction (needs system
+                    # `tesseract`, e.g. `brew install tesseract`)
+Pillow>=10.0        # image loading for barcode_read / vision_identify / image_process cleanup masks
+pillow-heif>=0.15   # Pillow plugin so resale_listing_ai/providers/bedrock.py can DECODE iPad/iPhone .heic
+                    # photos: neither Bedrock Converse nor Nova Canvas accepts HEIC, so those
+                    # submissions must be converted to JPEG before the bytes ever reach AWS.
+                    # Needs system libheif (e.g. `brew install libheif`; the wheels bundle it on
+                    # most platforms).
+requests>=2.31      # image_process -> PhotoRoom (background removal) + Clipdrop (tape/clutter cleanup)
+boto3>=1.35.99      # image_process -> S3 upload; queue.py -> real SQS (RESALE_LISTING_AI_QUEUE_MODE=sqs);
+                    # resale_listing_ai/providers/bedrock.py -> Bedrock vision + Nova Canvas image_process
+                    # (needs AWS_BEARER_TOKEN_BEDROCK or standard AWS credentials;
+                    # see RESALE_LISTING_AI_VISION_PROVIDER=bedrock)
+                    # FLOOR RATIONALE: two features this repo depends on postdate the old
+                    # >=1.34 floor by a wide margin -- (1) the bedrock-runtime CONVERSE API
+                    # (mid-2024) and (2) AWS_BEARER_TOKEN_BEDROCK Bedrock-API-key auth
+                    # (2025). A stale-but->=1.34 boto3 satisfies the old floor yet fails
+                    # with a confusing AttributeError / auth error instead of a clear one.
+                    # 1.35.99 is a deliberately conservative choice made WITHOUT network
+                    # access to AWS's changelog: reverify the exact minimum against the
+                    # boto3/botocore release notes before shipping to production.
+anthropic>=0.34     # json_repair.py -> default JSON-repair provider (needs ANTHROPIC_API_KEY); swap to
+                    # RESALE_LISTING_AI_JSON_REPAIR_PROVIDER=openai to reuse the OpenAI key instead, no new dep
+
+# resale_listing_ai/db.py, only needed when RESALE_LISTING_AI_DB_MODE=postgres (default is the
+# stdlib-sqlite offline fallback used by pytest/run_demo.py):
+psycopg[binary]>=3.1   # Store -> real Postgres (see docker-compose.yml + DATABASE_URL)
+
+# resale_listing_ai/api.py — the intake API (System Design §3.1/§5.1), only needed to
+# actually run `python -m resale_listing_ai.api`; not imported by pytest/run_demo.py:
+fastapi>=0.115
+uvicorn>=0.30
+httpx>=0.27         # FastAPI's TestClient (tests/test_api.py)
+python-multipart>=0.0.9  # FastAPI multipart/form-data parsing for POST /v1/uploads
+email-validator>=2.0     # pydantic EmailStr -> RegisterIn email validation (resale_listing_ai/api.py)

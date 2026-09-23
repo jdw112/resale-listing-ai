@@ -1,0 +1,17 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Vision-QC gate for a generated website hero, before it is trusted -- resale_listing_ai/adapters.py's _hero_qc(). {query} replaced via .replace() (NOT str.format()). Standard sections 6-7. Report each check honestly; the caller computes overall pass as the AND of the four booleans.",
+  "instructions": "Look at this generated product hero image for: \"{query}\". Answer four independent checks about the image. branding_clear: true only if there is NO recognizable or fabricated branding -- no brand names, logos, model names/numbers, slogans, certification marks, rating labels, serial labels, retailer graphics, or invented fake lettering -- anywhere in the image. coherent: true only if the image shows one coherent product with no duplicated components, warped or impossible geometry, malformed controls, impossible reflections, or floating parts. matches_confirmed: true only if the depicted product matches the confirmed product type, colour family, core configuration, and major visible components. no_invented: true only if the image contains no accessories, attachments, packaging, controls, or features beyond what the product type normally includes. Put a short reason for every false answer into reasons. If in doubt on any check, answer false.",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "branding_clear": {"type": "boolean"},
+      "coherent": {"type": "boolean"},
+      "matches_confirmed": {"type": "boolean"},
+      "no_invented": {"type": "boolean"},
+      "reasons": {"type": "array", "items": {"type": "string"}}
+    },
+    "required": ["branding_clear", "coherent", "matches_confirmed", "no_invented", "reasons"],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Listing-side 'observed physical unit' extraction (condition/completeness/defects/testing), distinct from vision_identify's product-identity fields. resale_listing_ai/adapters.py's unit_observe().",
+  "instructions": "You are observing THIS SPECIFIC PHYSICAL UNIT's condition, completeness, and defects from photographs for a resale intake workflow — distinct from identifying what the product is. Look only at what is visible in the images (wear, damage, included accessories, packaging) and any submitter notes provided. For each requested field, return the value only if the evidence supports it, with source 'vision' (read from what's visible in the photos), 'label_ocr' (read from printed serial/label text), or 'context' (stated in the submitter's notes). If a field is not supported by the evidence, set value to null and confidence to 0.0 — never guess, infer a plausible-sounding value, or assume typical condition. TestingStatus, TestsPerformed, and TestResults are the strictest fields here: a photograph can NEVER show whether a device powers on or functions — never infer functional status from cosmetic appearance alone. Fill these three fields ONLY when the submitter's notes explicitly state that testing was done (source 'context'); if the notes say nothing about testing, set all three to null and confidence 0.0.",
+  "fields": [
+    "SerialNumber", "AISuggestedConditionGrade", "ConditionDetails", "VisibleWear",
+    "ActualIncludedItems", "MissingItems", "MissingComponents",
+    "OriginalPackagingIncluded", "OriginalBoxIncluded", "MissingHardware",
+    "DefectsOrDamage", "FunctionalConcerns", "TestingStatus", "TestsPerformed",
+    "TestResults", "UnitSpecificNotes"
+  ],
+  "field_schema": {
+    "type": "object",
+    "properties": {
+      "value": {"type": ["string", "null"]},
+      "confidence": {"type": "number"},
+      "source": {"type": "string", "enum": ["vision", "label_ocr", "context"]}
+    },
+    "required": ["value", "confidence", "source"],
+    "additionalProperties": false
+  }
+}

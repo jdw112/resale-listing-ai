@@ -1,0 +1,31 @@
+# --- version control / editor ---
+.git
+.gitignore
+.github
+.claude
+**/.DS_Store
+
+# --- secrets: never bake into an image ---
+.env
+.env.*
+!.env.example
+
+# --- python runtime cruft ---
+.venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+*.swp
+
+# --- node: rebuilt inside the image, don't copy host artifacts ---
+frontend/node_modules
+frontend/dist
+
+# --- local runtime data / outputs ---
+uploads
+out
+docs
+tests
+run_demo.py
+run_findings.py
+run_live_demo.py

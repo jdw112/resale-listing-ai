@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      # System libraries the real adapters need at import/run time — same two the
+      # Dockerfile installs: libzbar0 (pyzbar/barcode_read) and tesseract-ocr
+      # (pytesseract/ocr_read). The suite runs offline (sqlite store, local queue,
+      # no provider keys), but tests/test_adapters.py exercises pyzbar for real.
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libzbar0 tesseract-ocr
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest -q

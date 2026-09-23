@@ -1,0 +1,14 @@
+{
+  "_note": "Per-model token prices in USD per 1,000,000 tokens, plus a USD->CAD factor used to convert to the ledger's CAD. Source of truth for token-based cost; resale_listing_ai/rates.py reads this. Unknown models fall back to the provider's flat unit cost. VERIFY against the live OpenAI pricing page and a current FX rate before go-live -- these are point-in-time values.",
+  "_source": "https://developers.openai.com/api/docs/pricing (OpenAI standard text/vision pricing)",
+  "_source_checked": "2026-09-04",
+  "usd_to_cad": 1.38,
+  "models": {
+    "gpt-5.5": {"input_usd_per_1m": 5.00, "output_usd_per_1m": 30.00},
+    "gpt-5.4": {"input_usd_per_1m": 2.50, "output_usd_per_1m": 15.00},
+    "gpt-5": {"input_usd_per_1m": 1.25, "output_usd_per_1m": 10.00},
+    "gpt-4.1": {"input_usd_per_1m": 2.00, "output_usd_per_1m": 8.00},
+    "gpt-4o-mini": {"input_usd_per_1m": 0.15, "output_usd_per_1m": 0.60},
+    "gpt-5.6-luna": {"input_usd_per_1m": 0.20, "output_usd_per_1m": 1.20}
+  }
+}

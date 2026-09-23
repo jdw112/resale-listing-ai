@@ -1,0 +1,11 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Listing copy generated from ONLY confident() Product facts (resale_listing_ai/adapters.py's generate_copy()). field_schema here is a plain nullable string, not the {value,confidence,source} envelope -- copy fields are generated text, not observed facts.",
+  "instructions": "Write resale listing copy using ONLY the VERIFIED PRODUCT FACTS given below — never invent a spec, feature, material, or fact that isn't present in those facts. These facts describe the product in general, not this specific unit's condition, so never state or imply any condition claim at all. Return MasterTitle (channel-neutral, required), ShortTitle, MasterDescription, up to 5 BulletPoints, SearchTerms, and SEOKeywords. If a field cannot be honestly written from the given facts, return null for it rather than guessing or padding it out.",
+  "fields": [
+    "MasterTitle", "ShortTitle", "MasterDescription",
+    "BulletPoint1", "BulletPoint2", "BulletPoint3", "BulletPoint4", "BulletPoint5",
+    "SearchTerms", "SEOKeywords"
+  ],
+  "field_schema": {"type": ["string", "null"]}
+}

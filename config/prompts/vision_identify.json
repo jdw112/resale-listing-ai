@@ -1,0 +1,22 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Product-identity extraction from photos (resale_listing_ai/adapters.py's vision_identify()). fields + field_schema are assembled into the full JSON-mode schema at import time -- see adapters.py's _load_prompt/_validate_strict_schema.",
+  "instructions": "You are extracting product-identity facts from photographs for a resale intake workflow. Look only at what is visible in the images (product body, labels, packaging, rating plates, and any printed text on the box) and any notes provided. For each requested field, return the value only if the evidence supports it with source 'vision' (read from the product/packaging appearance) or 'label_ocr' (read from printed label/rating-plate text). If a field is not supported by the evidence, set value to null and confidence to 0.0 — never guess, infer a plausible-sounding value, or fill in typical/average specifications. InternalCategory and InternalSubcategory are an OPEN vocabulary: return one reasonable, reasonably specific label inferred from the product and how comparable items are commonly classified online — do not force-fit a fixed taxonomy. Do not merge facts from a similar-looking but different model or regional variant. Additional attribute fields: 'Finish' is the surface treatment (e.g. Brushed Nickel, Matte Black) when visible; 'ProductLineOrSeries' is a product-line or collection name printed alongside the brand (distinct from the model number); 'StandardIncludedItems' is what the packaging states is in the box (e.g. 'valve, mounting hardware, instruction manual') — read only from a printed 'includes'/'in the box'/contents list, do not infer; 'CompatibilityNotes' and 'InstallationRequirements' only when explicitly printed on the packaging/label; 'CategorySpecificSpecifications' captures printed technical specs relevant to the category (e.g. size, voltage, pressure rating, connection type) as a short 'name: value; name: value' string. For every one of these, if it is not actually printed/visible, return null — never fill in typical specifications.",
+  "fields": [
+    "Brand", "Manufacturer", "ProductName", "ProductType", "ModelNumber", "MPN",
+    "Variant", "Colour", "Material", "Finish", "ProductLineOrSeries",
+    "InternalCategory", "InternalSubcategory",
+    "StandardIncludedItems", "CompatibilityNotes", "InstallationRequirements",
+    "CategorySpecificSpecifications"
+  ],
+  "field_schema": {
+    "type": "object",
+    "properties": {
+      "value": {"type": ["string", "null"]},
+      "confidence": {"type": "number"},
+      "source": {"type": "string", "enum": ["vision", "label_ocr"]}
+    },
+    "required": ["value", "confidence", "source"],
+    "additionalProperties": false
+  }
+}

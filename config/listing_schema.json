@@ -1,0 +1,310 @@
+{
+  "$schema": "resale-listing-ai-baseline/v1",
+  "record": "ListingInformation",
+  "grain": "one per physical unit / sellable item (linked to Product via ProductKey)",
+  "description": "What was actually received, observed, included, missing, tested, and prepared for one physical unit.",
+  "source_workbook": "30f038c6-8dbe-4eb1-8d39-e5edd570b9c9.xlsx",
+  "generated": "2026-07-23",
+  "field_count": 33,
+  "value_envelope": {
+    "value": "<x>",
+    "confidence": "0.0-1.0",
+    "source": [
+      "barcode",
+      "label_ocr",
+      "vision",
+      "external_lookup",
+      "context",
+      "provided",
+      "measured",
+      "derived"
+    ]
+  },
+  "rules": [
+    "ProvidedConditionGrade is a controlled input and must never be overwritten; a differing AISuggestedConditionGrade raises a review flag.",
+    "SerialNumber is extracted only; never invented. SKU is randomized, non-sequential, and unique.",
+    "Only 2-3 ListingImageURL columns are populated under the current image rule; the rest stay blank (reserved capacity).",
+    "Leave unsupported fields blank/undetermined; never fabricate to fill a cell.",
+    "Additions beyond baseline are allowed when reliably extractable and valuable (document them)."
+  ],
+  "fields": [
+    {
+      "name": "ProductKey",
+      "order": 1,
+      "type": "string",
+      "group": "relationship",
+      "required": true,
+      "notes": "Foreign key to Product Information"
+    },
+    {
+      "name": "SKU",
+      "order": 2,
+      "type": "string",
+      "group": "identity",
+      "required": true,
+      "notes": "Randomized, non-sequential (FNSKU-like); generated, unique"
+    },
+    {
+      "name": "SerialNumber",
+      "order": 3,
+      "type": "string",
+      "group": "identity",
+      "required": false,
+      "notes": "Extracted only when readable; never invented; blank otherwise"
+    },
+    {
+      "name": "ProvidedConditionGrade",
+      "order": 4,
+      "type": "string",
+      "group": "condition",
+      "required": true,
+      "notes": "Controlled input from processor; never overwritten"
+    },
+    {
+      "name": "AISuggestedConditionGrade",
+      "order": 5,
+      "type": "string",
+      "group": "condition",
+      "required": false,
+      "notes": "Evidence-based; if it differs from provided, flag for review"
+    },
+    {
+      "name": "ConditionDetails",
+      "order": 6,
+      "type": "string",
+      "group": "condition",
+      "required": false
+    },
+    {
+      "name": "VisibleWear",
+      "order": 7,
+      "type": "string",
+      "group": "condition",
+      "required": false
+    },
+    {
+      "name": "ActualIncludedItems",
+      "order": 8,
+      "type": "string",
+      "group": "completeness",
+      "required": false
+    },
+    {
+      "name": "MissingItems",
+      "order": 9,
+      "type": "string",
+      "group": "completeness",
+      "required": false
+    },
+    {
+      "name": "MissingComponents",
+      "order": 10,
+      "type": "string",
+      "group": "completeness",
+      "required": false
+    },
+    {
+      "name": "OriginalPackagingIncluded",
+      "order": 11,
+      "type": "enum",
+      "group": "packaging",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No",
+        "Unable to Determine"
+      ]
+    },
+    {
+      "name": "OriginalBoxIncluded",
+      "order": 12,
+      "type": "enum",
+      "group": "packaging",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No",
+        "Unable to Determine"
+      ],
+      "notes": "Distinct from packaging"
+    },
+    {
+      "name": "MissingHardware",
+      "order": 13,
+      "type": "enum",
+      "group": "packaging",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No",
+        "Unable to Determine"
+      ],
+      "notes": "Unable-to-Determine avoids treating uncertain inspection as complete"
+    },
+    {
+      "name": "DefectsOrDamage",
+      "order": 14,
+      "type": "string",
+      "group": "function",
+      "required": false
+    },
+    {
+      "name": "FunctionalConcerns",
+      "order": 15,
+      "type": "string",
+      "group": "function",
+      "required": false
+    },
+    {
+      "name": "TestingStatus",
+      "order": 16,
+      "type": "string",
+      "group": "function",
+      "required": false
+    },
+    {
+      "name": "TestsPerformed",
+      "order": 17,
+      "type": "string",
+      "group": "function",
+      "required": false
+    },
+    {
+      "name": "TestResults",
+      "order": 18,
+      "type": "string",
+      "group": "function",
+      "required": false
+    },
+    {
+      "name": "OriginalPhotoFolderURL",
+      "order": 19,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Immutable originals"
+    },
+    {
+      "name": "ScrubbedPhotoFolderURL",
+      "order": 20,
+      "type": "url",
+      "group": "photos",
+      "required": false
+    },
+    {
+      "name": "ListingImageURL1",
+      "order": 21,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Supporting image 1 (unit-specific)"
+    },
+    {
+      "name": "ListingImageURL2",
+      "order": 22,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Supporting image 2"
+    },
+    {
+      "name": "ListingImageURL3",
+      "order": 23,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Supporting image 3"
+    },
+    {
+      "name": "ListingImageURL4",
+      "order": 24,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Reserved capacity; blank under current 2-3 image rule"
+    },
+    {
+      "name": "ListingImageURL5",
+      "order": 25,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Reserved capacity; blank"
+    },
+    {
+      "name": "ListingImageURL6",
+      "order": 26,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Reserved capacity; blank"
+    },
+    {
+      "name": "ListingImageURL7",
+      "order": 27,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Reserved capacity; blank"
+    },
+    {
+      "name": "ListingImageURL8",
+      "order": 28,
+      "type": "url",
+      "group": "photos",
+      "required": false,
+      "notes": "Reserved capacity; blank"
+    },
+    {
+      "name": "ActualProductPhotosAvailable",
+      "order": 29,
+      "type": "enum",
+      "group": "photos",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "OriginalPackagingPhotosAvailable",
+      "order": 30,
+      "type": "enum",
+      "group": "photos",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "ProductInformationLabelPhotosAvailable",
+      "order": 31,
+      "type": "enum",
+      "group": "photos",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "ContextualProductPhotosAvailable",
+      "order": 32,
+      "type": "enum",
+      "group": "photos",
+      "required": false,
+      "enum": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "UnitSpecificNotes",
+      "order": 33,
+      "type": "string",
+      "group": "notes",
+      "required": false
+    }
+  ]
+}

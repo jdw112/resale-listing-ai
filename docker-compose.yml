@@ -1,0 +1,105 @@
+# Shared environment for the API and the worker — they run the SAME image with
+# different commands. The queue MUST be sqs here (the `local` queue is in-process
+# in-memory, so a separate worker container would never see the API's jobs); it
+# talks to the LocalStack service below, no AWS account needed.
+# These override anything the same-named key in .env (env_file) might set, so the
+# in-container DB/queue wiring is always correct even though .env targets a
+# different (host) Postgres. (.env's AWS_PROFILE is unset by docker-entrypoint.sh
+# so boto3 uses the explicit test creds against localstack.)
+x-app-env: &app-env
+  RESALE_LISTING_AI_DB_MODE: postgres
+  DATABASE_URL: postgresql://resale_listing_ai:resale_listing_ai@postgres:5432/resale_listing_ai
+  RESALE_LISTING_AI_QUEUE_MODE: sqs
+  AWS_ENDPOINT_URL: http://localstack:4566
+  AWS_REGION: ca-central-1
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  STORAGE_BACKEND: mock
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: resale_listing_ai
+      POSTGRES_PASSWORD: resale_listing_ai
+      POSTGRES_DB: resale_listing_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - resale_listing_ai_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U resale_listing_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # SQS (+ S3) emulation for RESALE_LISTING_AI_QUEUE_MODE=sqs against a local queue that
+  # speaks the real SQS wire protocol, no AWS account needed. resale_listing_ai/queue.py's
+  # SQSQueue talks to it unmodified via AWS_ENDPOINT_URL=http://localhost:4566 —
+  # same boto3 calls as real AWS, only the endpoint differs.
+  localstack:
+    image: localstack/localstack:3
+    environment:
+      SERVICES: sqs,s3
+      DEFAULT_REGION: ca-central-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - resale_listing_ai_localstack:/var/lib/localstack
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:4566/_localstack/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # API + built frontend, one image. Serves the SPA and /v1 on the same origin.
+  app:
+    build: .
+    image: resale_listing_ai:local
+    # .env (gitignored) supplies provider keys + RESALE_LISTING_AI_ADMIN_EMAIL/PASSWORD;
+    # the environment block below overrides its DB/queue/AWS wiring. env_file is
+    # optional — compose warns but still runs if .env is absent.
+    env_file:
+      - .env
+    environment:
+      <<: *app-env
+      RESALE_LISTING_AI_COOKIE_SECURE: "0"   # local HTTP; NEVER 0 behind HTTPS in prod
+      RESALE_LISTING_AI_BOOTSTRAP_ADMIN: "1"  # ensure the bootstrap admin on startup (app only)
+    ports:
+      - "8000:8000"
+    volumes:
+      - resale_listing_ai_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
+  # Worker: SAME image, different command. Shares the uploads volume so it can
+  # read the photos the API wrote. Runs LIVE providers using the keys from .env
+  # (env_file). To go back offline/free, add `RESALE_LISTING_AI_STUBS: "1"` to the
+  # environment block below.
+  worker:
+    build: .
+    image: resale_listing_ai:local
+    command: ["python", "-m", "resale_listing_ai.worker", "--loop"]
+    # Same .env for provider keys. Does NOT set RESALE_LISTING_AI_BOOTSTRAP_ADMIN, so only
+    # the app boots the admin — no race between the two containers.
+    env_file:
+      - .env
+    environment:
+      <<: *app-env
+    volumes:
+      - resale_listing_ai_uploads:/app/uploads
+    depends_on:
+      app:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
+volumes:
+  resale_listing_ai_pgdata:
+  resale_listing_ai_localstack:
+  resale_listing_ai_uploads:

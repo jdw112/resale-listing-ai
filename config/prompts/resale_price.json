@@ -1,0 +1,25 @@
+{
+  "$schema": "resale-listing-ai-prompt/v1",
+  "note": "Dynamic: {query} is replaced with the confirmed product-identity text at call time via .replace(), NOT str.format(). Used-resale comparable context ONLY (Comparable* fields), never the pricing anchor -- resale_listing_ai/adapters.py's resale_price().",
+  "instructions": "Find a comparable USED/resale listing (eBay.ca-style sold or active listing) for: \"{query}\", priced in CAD. This is comparable market context only, not a definitive value. If you cannot find a genuine comparable, set match_found to false and leave comparable null — never estimate or guess a price.",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "match_found": {"type": "boolean"},
+      "comparable": {
+        "type": ["object", "null"],
+        "properties": {
+          "brand": {"type": "string"},
+          "product_name": {"type": "string"},
+          "price_cad": {"type": "number"},
+          "confidence": {"type": "number"},
+          "source_url": {"type": "string"}
+        },
+        "required": ["brand", "product_name", "price_cad", "confidence", "source_url"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["match_found", "comparable"],
+    "additionalProperties": false
+  }
+}
